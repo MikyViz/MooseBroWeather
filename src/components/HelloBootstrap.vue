@@ -16,7 +16,7 @@
   </div>
 </template>
 <script>
-import { BIcon, BIconCamera } from 'bootstrap-vue'
+// import { BIcon, BIconCamera } from 'bootstrap-vue'
 export default {
   methods: {
     showModal() {
