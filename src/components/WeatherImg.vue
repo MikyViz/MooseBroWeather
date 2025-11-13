@@ -1,21 +1,23 @@
 <script setup>
-import { defineProps, ref } from 'vue';
+import { defineProps, computed } from 'vue';
 
 const { weatherData } = defineProps({
   weatherData: {
     type: Object,
-    required: true
+    required: false,
+    default: null
   }
 });
 
- const imgCode = ref(weatherData.weather[0].icon);
- const imgURL = ref(`https://openweathermap.org/img/wn/${imgCode.value}@2x.png`);
+const imgBase = import.meta.env.VITE_OPENWEATHER_IMG_URL || 'https://openweathermap.org/img/wn';
+const imgCode = computed(() => (weatherData && weatherData.weather ? weatherData.weather[0].icon : '04d'));
+const imgURL = computed(() => `${imgBase}/${imgCode.value}@2x.png`);
 
 </script>
 
 <template>
   <div>
-    <img :src="imgURL" :alt="weatherData.weather[0].description">
+  <img :src="imgURL">
   </div>
 </template>
 

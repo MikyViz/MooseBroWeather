@@ -1,18 +1,37 @@
 <script setup>
-import CurentDate from './components/CurentDate.vue'
-import WeatherImg from './components/WeatherImg.vue'
-import SearchLocation from './components/SearchLocation.vue'
-import { ref, provide, onMounted  } from 'vue'
+import CurentDate from './components/CurentDate.vue';
+import WeatherImg from './components/WeatherImg.vue';
+import SearchLocation from './components/SearchLocation.vue';
+import { ref, provide, onMounted  } from 'vue';
 
-const latitude = ref(44.34)
-const longitude = ref(10.99)
-const error = ref(null)
+const latitude = ref(44.34);
+const longitude = ref(10.99);
+const error = ref(null);
 
-let APPID = '1e79072404f93c5b88c1afe026dbda5d'
-let city ='';
-const NameUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APPID}`;
-const LatLonUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude.value}&lon=${longitude.value}&appid=${APPID}&units=metric`
-let URL = LatLonUrl;
+// Use Vite env vars (must be prefixed with VITE_)
+const APPID = import.meta.env.VITE_OPENWEATHER_API_KEY || '';
+let city = '';
+let celsius = ref(true);
+
+const setUrlName = ()=>{
+
+}
+
+const setUrl = (units, queries) => {
+  // allow overriding base url via env, fallback to OpenWeatherMap
+  let baseUrl = import.meta.env.VITE_OPENWEATHER_BASE_URL || 'https://api.openweathermap.org/data/2.5/weather';
+  let appId = APPID ? `appid=${APPID}` : '';
+  const queryParts = [queries, appId].filter(Boolean).join('&');
+  if (queryParts) return `${baseUrl}?${queryParts}&units=${units}`;
+  return `${baseUrl}?units=${units}`;
+};
+
+const measurement = ()=>{
+  celsius.value=!celsius.value;
+  let unit = celsius.value ? 'metric' : "imperial";
+  let url = setUrl(unit,`lat=${latitude.value}&lon=${longitude.value}`);
+  getData(url);
+}
 
 const weatherData = ref(null)
 
@@ -31,10 +50,10 @@ const getCurrentLocation = () => {
 }
 
 function successCallback(position) {
-  console.log("suka");
   latitude.value = position.coords.latitude
   longitude.value = position.coords.longitude
-  getData(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude.value}&lon=${longitude.value}&appid=${APPID}&units=metric`)
+  let unit = celsius.value ? 'metric' : "imperial";
+  getData(setUrl(unit,`lat=${latitude.value}&lon=${longitude.value}`))
 }
 
 function errorCallback(err) {
@@ -43,23 +62,26 @@ function errorCallback(err) {
 
 provide('getLocation', {getCurrentLocation})
 
-const WeatherByRequriedLocation = (locatin)=>{
-  city = location;
-  // URL=NameUrl
-  getData(`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${APPID}`);
+const WeatherByRequriedLocation = ()=>{
+  // city = location;
+  let unit = celsius.value ? 'metric' : 'imperial';
+  let url = setUrl(unit, `q=${city}`);
+  getData(url);
 }
 
 // onMounted(() => {
 //   getCurrentLocation();
 //   getData(LatLonUrl);
 // });
+let URL = setUrl("metric", `lat=${latitude.value}&lon=${longitude.value}`);
 getData(URL);
-// getData(`https://api.openweathermap.org/data/2.5/weather?lat=44.34&lon=10.99&appid=1e79072404f93c5b88c1afe026dbda5d`)
 </script>
 
 <template>
   <header>
     <div class="wrapper">
+      <button @click="measurement" :class="{choised:celsius, unchoised:!celsius}" class="metric-btn">°C</button>
+      <button @click="measurement" :class="{choised:!celsius, unchoised:celsius}" class="metric-btn">°F</button>
       <SearchLocation @requiredLocation="WeatherByRequriedLocation"/>
       <WeatherImg :weatherData="weatherData" />
       <CurentDate :weatherData="weatherData" />
@@ -74,6 +96,21 @@ getData(URL);
 .wrapper {
   background-color: rgb(54, 54, 93);
   height: 100vh;
-  width: 90vw;
+  width: 50vw;
+}
+.metric-btn{
+  border-radius: 50%;
+  padding: 10px;
+  font-size: 19px;
+  font-weight: bolder;
+  border: none;
+}
+.choised{
+  color: beige;
+  background-color: rgb(79, 96, 181);
+}
+.unchoised{
+color: rgb(79, 96, 181);
+background-color: beige;
 }
 </style>

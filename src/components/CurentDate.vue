@@ -5,10 +5,12 @@ import MyLocation from './MyLocation.vue'
 const props = defineProps({
   weatherData: {
     type: Object,
-    required: true
+    required: false,
+    default: null
   }
 })
-const date = ref(new Date(props.weatherData.dt * 1000))
+let dt = props.weatherData && props.weatherData.dt * 1000 || new Date()
+const date = ref(dt)
 const formattedDate = computed(() => {
   const options = {
     timeZone: 'UTC',
@@ -28,10 +30,10 @@ const formattedDate = computed(() => {
   <MyLocation />
 
   <div class="greetings">
-    <h1 v-if="props.weatherData">{{ props.weatherData.main.temp }}</h1>
-    <h2>{{ weatherData.weather[0].main }}</h2>
+    <h1 v-if="props.weatherData && props.weatherData.main">{{ props.weatherData.main.temp }}</h1>
+    <h2>{{ weatherData && weatherData.weather && weatherData.weather[0] ? weatherData.weather[0].main : 'await please' }}</h2>
     <p>{{ formattedDate }}</p>
-    <p><span class="material-symbols-outlined">place</span> {{ weatherData.name }} </p>
+    <p><span class="material-symbols-outlined">place</span> {{ weatherData ? weatherData.name : "await please"}} </p>
   </div>
 </template>
 

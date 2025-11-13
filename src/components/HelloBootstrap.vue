@@ -1,33 +1,57 @@
 <template>
   <div class="container">
-    <b-jumbotron header="Bootstrap-Vue" lead="Bootstrap v4 Components for Vue.js 2">
-      <p>Now running on @vue/compat and Vue.js 3</p>
-      <b-button variant="primary" @click="showModal"> Click me! </b-button>
-      <b-modal ref="my-modal" hide-footer title="Using Component Methods">
-        <div class="d-block text-center">
-          <h3>Hello From My Modal!</h3>
+    <div class="bg-light p-5 rounded-lg">
+      <h1 class="display-4">Bootstrap 5</h1>
+      <p class="lead">Bootstrap v5 with Vue.js 3</p>
+      <hr class="my-4">
+      <p>Now running on native Vue.js 3</p>
+      <button class="btn btn-primary" @click="showModal">Click me!</button>
+      
+      <!-- Bootstrap 5 Modal -->
+      <div class="modal fade" ref="myModal" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel">Using Component Methods</h5>
+              <button type="button" class="btn-close" @click="hideModal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+              <h3>Hello From My Modal!</h3>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-outline-danger" @click="hideModal">Close Me</button>
+              <button type="button" class="btn btn-outline-warning" @click="toggleModal">Toggle Me</button>
+            </div>
+          </div>
         </div>
-        <b-button class="mt-3" variant="outline-danger" block @click="hideModal">Close Me</b-button>
-        <b-button class="mt-2" variant="outline-warning" block @click="toggleModal"
-          >Toggle Me</b-button
-        >
-      </b-modal>
-    </b-jumbotron>
+      </div>
+    </div>
   </div>
 </template>
-<script>
-// import { BIcon, BIconCamera } from 'bootstrap-vue'
-export default {
-  methods: {
-    showModal() {
-      this.$refs['my-modal'].show()
-    },
-    hideModal() {
-      this.$refs['my-modal'].hide()
-    },
-    toggleModal() {
-      this.$refs['my-modal'].toggle()
-    }
+
+<script setup>
+import { ref, onMounted } from 'vue';
+
+const myModal = ref(null);
+let modalInstance = null;
+
+onMounted(() => {
+  // Initialize Bootstrap modal
+  if (myModal.value) {
+    // Using native Bootstrap 5 Modal API
+    modalInstance = new window.bootstrap.Modal(myModal.value);
   }
-}
+});
+
+const showModal = () => {
+  if (modalInstance) modalInstance.show();
+};
+
+const hideModal = () => {
+  if (modalInstance) modalInstance.hide();
+};
+
+const toggleModal = () => {
+  if (modalInstance) modalInstance.toggle();
+};
 </script>
