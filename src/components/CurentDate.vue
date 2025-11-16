@@ -182,20 +182,87 @@ const tempRange = computed(() => {
   background: rgba(255, 255, 255, 0.3);
 }
 
-@media (max-width: 600px) {
+/* Responsive */
+@media (max-width: 768px) {
   .location h2 {
-    font-size: 22px;
+    font-size: 24px;
+  }
+  
+  .location .material-symbols-outlined {
+    font-size: 24px;
+  }
+  
+  .temperature {
+    margin: 30px 0;
   }
   
   .temperature h1 {
-    font-size: 72px;
+    font-size: 80px;
   }
   
   .temperature .unit {
-    font-size: 36px;
+    font-size: 40px;
   }
   
   .description {
+    font-size: 20px;
+  }
+  
+  .temp-range {
+    max-width: 180px;
+    padding: 12px;
+  }
+  
+  .range-item {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .location h2 {
+    font-size: 20px;
+  }
+  
+  .location .material-symbols-outlined {
+    font-size: 20px;
+  }
+  
+  .date {
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+  
+  .temperature {
+    margin: 25px 0;
+  }
+  
+  .temperature h1 {
+    font-size: 64px;
+  }
+  
+  .temperature .unit {
+    font-size: 32px;
+  }
+  
+  .description {
+    font-size: 18px;
+  }
+  
+  .feels-like {
+    font-size: 14px;
+  }
+  
+  .temp-range {
+    gap: 15px;
+    padding: 10px;
+    max-width: 160px;
+  }
+  
+  .range-item {
+    font-size: 15px;
+  }
+  
+  .range-item .material-symbols-outlined {
     font-size: 18px;
   }
 }

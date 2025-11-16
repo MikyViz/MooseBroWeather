@@ -197,7 +197,8 @@ const windDirection = computed(() => {
   margin: 0;
 }
 
-@media (max-width: 600px) {
+/* Responsive */
+@media (max-width: 768px) {
   .details-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
@@ -205,8 +206,6 @@ const windDirection = computed(() => {
   
   .detail-card {
     padding: 12px;
-    flex-direction: column;
-    text-align: center;
   }
   
   .detail-icon {
@@ -216,6 +215,49 @@ const windDirection = computed(() => {
   
   .detail-icon .material-symbols-outlined {
     font-size: 24px;
+  }
+  
+  .detail-value {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .weather-details {
+    margin: 25px 0;
+  }
+  
+  .details-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+  
+  .details-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  .detail-card {
+    padding: 12px;
+    flex-direction: row;
+    text-align: left;
+  }
+  
+  .detail-icon {
+    width: 38px;
+    height: 38px;
+  }
+  
+  .detail-icon .material-symbols-outlined {
+    font-size: 22px;
+  }
+  
+  .detail-label {
+    font-size: 11px;
+  }
+  
+  .detail-value {
+    font-size: 14px;
   }
 }
 </style>

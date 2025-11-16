@@ -320,5 +320,54 @@ const closeSuggestions = () => {
     left: -10px;
     right: -10px;
   }
+  
+  .search-container {
+    padding: 4px 4px 4px 12px;
+  }
+  
+  .search-input {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    padding: 3px 3px 3px 10px;
+  }
+  
+  .search-icon {
+    font-size: 18px;
+    margin-right: 6px;
+  }
+  
+  .search-input {
+    font-size: 13px;
+    padding: 6px 6px 6px 0;
+  }
+  
+  .search-btn {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .search-btn .material-symbols-outlined {
+    font-size: 18px;
+  }
+  
+  .suggestion-item {
+    padding: 10px 12px;
+  }
+  
+  .city-icon {
+    font-size: 18px;
+  }
+  
+  .city-name {
+    font-size: 13px;
+  }
+  
+  .city-details {
+    font-size: 11px;
+  }
 }
 </style>

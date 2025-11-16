@@ -1,5 +1,5 @@
 <script setup>
-import { provide, onMounted } from 'vue';
+import { provide, onMounted, ref } from 'vue';
 import CurentDate from './components/CurentDate.vue';
 import WeatherImg from './components/WeatherImg.vue';
 import SearchLocation from './components/SearchLocation.vue';
@@ -34,16 +34,32 @@ const {
 const {
   isCelsius,
   unit,
-  toggleUnit
+  toggleUnit,
+  setToCelsius,
+  setToFahrenheit
 } = useTemperatureUnit();
 
+// Store last search to re-fetch when unit changes
+const lastSearchCity = ref(null);
+const lastSearchCoords = ref(null);
+
 // Handle temperature unit change
-const handleUnitChange = async () => {
+const handleUnitChange = async (newUnit) => {
+  // Don't do anything if clicking the already active button
+  if (newUnit === 'celsius' && isCelsius.value) return;
+  if (newUnit === 'fahrenheit' && !isCelsius.value) return;
+  
   toggleUnit();
   
-  // Refresh weather data with new units
-  if (latitude.value && longitude.value) {
-    await fetchWeatherByCoords(latitude.value, longitude.value, unit.value);
+  // Refresh weather data with new units using last search
+  if (lastSearchCity.value) {
+    await fetchWeatherByCity(lastSearchCity.value, unit.value);
+  } else if (lastSearchCoords.value) {
+    await fetchWeatherByCoords(
+      lastSearchCoords.value.lat, 
+      lastSearchCoords.value.lon, 
+      unit.value
+    );
   }
 };
 
@@ -51,6 +67,8 @@ const handleUnitChange = async () => {
 const handleGetCurrentLocation = async () => {
   try {
     const coords = await getCurrentPosition();
+    lastSearchCity.value = null;
+    lastSearchCoords.value = { lat: coords.lat, lon: coords.lon };
     await fetchWeatherByCoords(coords.lat, coords.lon, unit.value);
   } catch (err) {
     console.error('Failed to get current location:', err);
@@ -63,6 +81,8 @@ provide('getLocation', { getCurrentLocation: handleGetCurrentLocation });
 // Handle city search
 const handleCitySearch = async (city) => {
   try {
+    lastSearchCity.value = city;
+    lastSearchCoords.value = null;
     await fetchWeatherByCity(city, unit.value);
   } catch (err) {
     console.error('Failed to fetch weather for city:', err);
@@ -74,6 +94,8 @@ onMounted(async () => {
   // Default coordinates (can be changed to user's preference)
   const defaultLat = 44.34;
   const defaultLon = 10.99;
+  
+  lastSearchCoords.value = { lat: defaultLat, lon: defaultLon };
   
   try {
     await fetchWeatherByCoords(defaultLat, defaultLon, unit.value);
@@ -93,12 +115,12 @@ onMounted(async () => {
           <div class="header">
             <div class="temp-toggle">
               <button 
-                @click="handleUnitChange" 
+                @click="handleUnitChange('celsius')" 
                 :class="{ active: isCelsius }" 
                 class="temp-btn"
               >°C</button>
               <button 
-                @click="handleUnitChange" 
+                @click="handleUnitChange('fahrenheit')" 
                 :class="{ active: !isCelsius }" 
                 class="temp-btn"
               >°F</button>
@@ -443,16 +465,46 @@ onMounted(async () => {
 }
 
 /* Responsive Design */
+
+/* Large Desktop */
+@media (max-width: 1400px) {
+  .app-container {
+    grid-template-columns: 1fr 2px 2fr;
+  }
+}
+
+/* Desktop / Tablet Landscape */
 @media (max-width: 1024px) {
   .app-container {
     grid-template-columns: 1fr 2px 1.5fr;
   }
+  
+  .panel-content {
+    padding: 30px;
+  }
+  
+  .app-logo {
+    width: 70%;
+    max-height: 80px;
+  }
 }
 
+/* Tablet Portrait */
 @media (max-width: 768px) {
   .app-container {
     grid-template-columns: 1fr;
     grid-template-rows: auto 2px 1fr;
+    height: auto;
+    min-height: 100vh;
+  }
+  
+  .left-panel {
+    max-height: 60vh;
+    min-height: 400px;
+  }
+  
+  .right-panel {
+    min-height: 500px;
   }
   
   .divider {
@@ -473,11 +525,68 @@ onMounted(async () => {
   }
   
   .panel-content {
-    padding: 25px;
+    padding: 25px 20px;
   }
   
   .app-logo {
-    width: 100px;
+    width: 60%;
+    max-height: 70px;
+  }
+  
+  .header {
+    margin-bottom: 20px;
+  }
+  
+  .temp-toggle {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .temp-btn {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .panel-content {
+    padding: 20px 15px;
+  }
+  
+  .left-panel {
+    min-height: 350px;
+  }
+  
+  .app-logo {
+    width: 50%;
+    max-height: 60px;
+  }
+  
+  .logo-container {
+    margin-bottom: 20px;
+    padding: 10px 0;
+  }
+  
+  .temp-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .chart-section {
+    padding: 0;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 360px) {
+  .panel-content {
+    padding: 15px 10px;
+  }
+  
+  .temp-btn {
+    padding: 6px 12px;
+    font-size: 12px;
   }
 }
 </style>
